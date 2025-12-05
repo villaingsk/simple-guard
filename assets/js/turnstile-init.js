@@ -3,7 +3,7 @@
         if (typeof turnstile === 'undefined') return;
         var widgets = document.querySelectorAll('.cf-turnstile');
         widgets.forEach(function (w) {
-            var sitekey = window.WPGP_TURNSTILE ? window.WPGP_TURNSTILE.sitekey : w.getAttribute('data-sitekey');
+            var sitekey = window.SG_TURNSTILE ? window.SG_TURNSTILE.sitekey : w.getAttribute('data-sitekey');
             if (!sitekey) return;
             // render visible widget
             try {
