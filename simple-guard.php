@@ -3,7 +3,7 @@
 Plugin Name: Simple Guard
 Plugin URI: https://github.com/justyupi/simple-guard
 Description: Fail-ban + Cloudflare Turnstile integration for WordPress login/register/lostpassword.
-Version: 1.0.0
+Version: 1.0.2
 Author: Kref Studio
 Author URI: https://krefstudio.com
 License: GPL-2.0-or-later
@@ -124,6 +124,11 @@ if (!class_exists('SG_Main')) {
                     'sitekey' => $opts['turnstile_sitekey'],
                     'mode' => $opts['turnstile_mode'] ?? 'always'
                 ]);
+                
+                // Inject CSS to prevent CLS (Layout Shift)
+                $css = '<style>.cf-turnstile{min-height:65px;margin-bottom:16px;}.login .cf-turnstile{margin-bottom:0;}</style>';
+                add_action('login_head', function() use ($css) { echo $css; });
+                add_action('wp_head', function() use ($css) { echo $css; });
             }
         }
 
