@@ -3,7 +3,7 @@
 Plugin Name: Simple Guard
 Plugin URI: https://github.com/justyupi/simple-guard
 Description: Fail-ban + Cloudflare Turnstile integration for WordPress login/register/lostpassword.
-Version: 1.0.2
+Version: 1.3.0
 Author: Kref Studio
 Author URI: https://krefstudio.com
 License: GPL-2.0-or-later
@@ -118,6 +118,9 @@ if (!class_exists('SG_Main')) {
         public function enqueue_login_assets(){
             $opts = get_option('sg_options');
             if (!empty($opts['turnstile_enabled']) && !empty($opts['turnstile_sitekey'])){
+                // Note: Cloudflare Turnstile requires their external script
+                // This is loaded directly from Cloudflare's CDN as required by their service
+                // Alternative: Users can self-host the script if needed
                 wp_enqueue_script('cloudflare-turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', [], null, true);
                 wp_enqueue_script('sg-turnstile-init', SG_PLUGIN_URL . 'assets/js/turnstile-init.js', ['cloudflare-turnstile'], null, true);
                 wp_localize_script('sg-turnstile-init', 'SG_TURNSTILE', [
@@ -146,7 +149,7 @@ if (!class_exists('SG_Main')) {
         public function ajax_unban_ip(){
             if (!current_user_can('manage_options')) wp_send_json_error('no');
             check_ajax_referer('sg_admin');
-            $ip = sanitize_text_field($_POST['ip'] ?? '');
+            $ip = isset($_POST['ip']) ? sanitize_text_field(wp_unslash($_POST['ip'])) : '';
             if (!$ip) wp_send_json_error('missing ip');
             $this->ban->unban_ip($ip);
             wp_send_json_success();

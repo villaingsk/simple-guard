@@ -12,7 +12,7 @@ if (!class_exists('SG_Ban_Manager')) {
 
         public function ban_ip($ip, $hours = 1, $reason = 'too_many_failures'){
             global $wpdb;
-            $until = date('Y-m-d H:i:s', time() + ($hours * 3600));
+            $until = gmdate('Y-m-d H:i:s', time() + ($hours * 3600));
             $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table} WHERE ip=%s", $ip));
             if ($row){
                 $wpdb->update($this->table, ['banned_until' => $until, 'reason' => $reason], ['id' => $row->id]);

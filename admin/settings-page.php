@@ -38,7 +38,7 @@ if (!defined('ABSPATH')) exit;
             <tr>
                 <th scope="row">Login Slug</th>
                 <td>
-                    <code><?php echo home_url('/'); ?></code>
+                    <code><?php echo esc_url(home_url('/')); ?></code>
                     <input type="text" name="sg_options[custom_login_slug]" value="<?php echo esc_attr($opts['custom_login_slug'] ?? ''); ?>" class="regular-text" placeholder="my-secret-login">
                     <p class="description">Enter a custom slug to hide <code>wp-login.php</code>. Leave empty to disable.<br>
                     <strong>Important:</strong> If you get locked out, rename the plugin folder via FTP to disable it.</p>
@@ -139,7 +139,7 @@ if (!defined('ABSPATH')) exit;
         const data = new FormData();
         data.append('action','sg_unban_ip');
         data.append('ip', this.dataset.ip);
-        data.append('_wpnonce','<?php echo wp_create_nonce('sg_admin'); ?>');
+        data.append('_wpnonce','<?php echo esc_js(wp_create_nonce('sg_admin')); ?>');
         fetch(ajaxurl, { method:'POST', body:data}).then(r=>r.json()).then(j=>{
             if (j.success) location.reload(); else alert('Error: ' + (j.data || 'Unknown'));
         });

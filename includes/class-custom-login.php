@@ -17,7 +17,8 @@ if (!class_exists('SG_Custom_Login')) {
 
             // Check if we need to handle the custom URL
             if (isset($_SERVER['REQUEST_URI'])) {
-                $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+                $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']));
+                $request_path = parse_url($request_uri, PHP_URL_PATH);
                 $home_path = parse_url(home_url(), PHP_URL_PATH);
                 
                 // Normalize paths
@@ -70,7 +71,8 @@ if (!class_exists('SG_Custom_Login')) {
             // Handle actions from URL segments if any
             // e.g. /my-login/logout/ -> $_GET['action'] = 'logout'
             $slug = $this->get_slug();
-            $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
+            $request_path = parse_url($request_uri, PHP_URL_PATH);
             $home_path = rtrim((string)parse_url(home_url(), PHP_URL_PATH), '/');
             $slug_path = $home_path . '/' . $slug;
             

@@ -21,11 +21,13 @@ class SG_Login_Protect {
 
     public function block_if_banned(){
         // only block access to wp-login.php (and auth endpoints)
-        if (strpos($_SERVER['REQUEST_URI'], 'wp-login.php') === false) return;
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
+        if (strpos($request_uri, 'wp-login.php') === false) return;
         $ip = sg_get_client_ip();
         if (sg_is_ip_whitelisted($ip)) return;
         if ($this->ban->is_banned($ip)){
-            wp_die(sprintf(__('Your IP (%s) is temporarily banned.'), esc_html($ip)), 403);
+            /* translators: %s: IP address */
+            wp_die(esc_html(sprintf(__('Your IP (%s) is temporarily banned.', 'simple-guard'), $ip)), 403);
         }
     }
 
@@ -34,13 +36,14 @@ class SG_Login_Protect {
     public function validate_turnstile_on_register($user_login, $user_email, $errors){
         $opts = get_option('sg_options');
         if (empty($opts['turnstile_enabled'])) return;
-        $token = $_POST['cf-turnstile-response'] ?? '';
+        // Nonce is verified by WordPress core in wp-login.php for registration
+        $token = isset($_POST['cf-turnstile-response']) ? sanitize_text_field(wp_unslash($_POST['cf-turnstile-response'])) : '';
         if (empty($token)){
-            $errors->add('sg_captcha', __('Please complete the CAPTCHA (Turnstile).'));
+            $errors->add('sg_captcha', __('Please complete the CAPTCHA (Turnstile).', 'simple-guard'));
             return;
         }
         if (!$this->turnstile->verify($token)){
-            $errors->add('sg_captcha_failed', __('CAPTCHA verification failed.'));
+            $errors->add('sg_captcha_failed', __('CAPTCHA verification failed.', 'simple-guard'));
             return;
         }
     }
@@ -49,12 +52,13 @@ class SG_Login_Protect {
     public function validate_turnstile_on_lostpassword(){
         $opts = get_option('sg_options');
         if (empty($opts['turnstile_enabled'])) return;
-        $token = $_POST['cf-turnstile-response'] ?? '';
+        // Nonce is verified by WordPress core in wp-login.php for lostpassword
+        $token = isset($_POST['cf-turnstile-response']) ? sanitize_text_field(wp_unslash($_POST['cf-turnstile-response'])) : '';
         if (empty($token)){
-            wp_die(__('Please complete the CAPTCHA (Turnstile).'), 400);
+            wp_die(esc_html(__('Please complete the CAPTCHA (Turnstile).', 'simple-guard')), 400);
         }
         if (!$this->turnstile->verify($token)){
-            wp_die(__('CAPTCHA verification failed.'), 400);
+            wp_die(esc_html(__('CAPTCHA verification failed.', 'simple-guard')), 400);
         }
     }
     public function render_turnstile_widget(){

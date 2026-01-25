@@ -5,10 +5,13 @@ if (!defined('ABSPATH')) exit;
 if (!function_exists('sg_get_client_ip')) {
     function sg_get_client_ip(){
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
-            $list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $forwarded = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']));
+            $list = explode(',', $forwarded);
             return trim($list[0]);
         }
-        if (!empty($_SERVER['REMOTE_ADDR'])) return $_SERVER['REMOTE_ADDR'];
+        if (!empty($_SERVER['REMOTE_ADDR'])) {
+            return sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
+        }
         return '0.0.0.0';
     }
 }
