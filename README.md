@@ -1,24 +1,53 @@
-# wp-guad
-Protect wp login for wordpress
+== Description ==
 
-Login Protection (Fail-Ban / Brute Force Protection)
-- Logs failed login attempts by IP.
-- Auto-Block: Blocks an IP after reaching a certain failure threshold (default: 3 attempts).
-- Block Duration: Sets how long an IP is blocked (default: 4 hours).
-- IP Whitelist: List of IPs that will never be blocked (for admins).
-- Reset on Success: Option to reset the failure count if a user successfully logs in.
-- Ban Management: Admins can view a list of banned IPs and perform manual unbans.
+Simple Guard provides comprehensive login security for WordPress with fail-ban protection and Cloudflare Turnstile integration.
 
-Cloudflare Turnstile Integration (Captcha)
-- Adds Turnstile verification to the Login, Register, and Lost Password forms.
-- Supports Site Key and Secret Key settings.
-- Display mode: Always, Invisible, or Fallback.
+**Features:**
 
-Custom Login URL
-- Change the default WordPress login URL (e.g., from wp-login.php to a custom slug like /member-login).
-- Prevent direct access to wp-login.php (redirect to home if accessed directly without custom slug).
+* **Fail-Ban Protection:** Automatically ban IPs after failed login attempts
+* **Cloudflare Turnstile:** CAPTCHA protection for login, registration, and password reset
+* **Custom Login URL:** Hide wp-login.php with custom URL slug
+* **IP Whitelist:** Prevent lockout for trusted IPs
+* **Admin Dashboard:** View and manage banned IPs
+* **Flexible Configuration:** Customize ban duration, failure threshold, and more
+
+== Installation ==
+
+1. Upload folder to wp-content/plugins
+2. Activate plugin
+3. Go to Settings → Simple Guard
+4. Configure Turnstile Site Key & Secret (get from Cloudflare)
+5. Set max login failures and ban duration
+6. Add your admin IP to whitelist to avoid lockout
+
+== Frequently Asked Questions ==
+
+= How do I get Cloudflare Turnstile keys? =
+
+1. Sign up at cloudflare.com
+2. Go to Turnstile dashboard
+3. Create a new site
+4. Copy Site Key and Secret Key
+5. Paste into Simple Guard settings
+
+= What if I get locked out? =
+
+1. Add your IP to whitelist before testing
+2. If locked out, rename plugin folder via FTP to disable
+3. Or manually delete ban from database: wp_sg_bans table
+
+= Does this work with custom login plugins? =
+
+Yes, Simple Guard includes its own custom login URL feature. Disable other custom login plugins to avoid conflicts.
 
 == Changelog ==
+
+= 1.3.1 =
+* Security: Fixed SQL injection warnings in Ban Manager
+* Security: Fixed direct database query warnings
+* Security: Improved nonce verification handling in login protection
+* Code Quality: Switched to wp_parse_url for better compatibility
+* Code Quality: Fixed enqueued resource warnings
 
 = 1.3.0 =
 * Security: Fixed all WordPress.org validation errors and warnings
