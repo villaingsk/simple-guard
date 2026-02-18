@@ -37,6 +37,7 @@ class SG_Login_Protect {
         $opts = get_option('sg_options');
         if (empty($opts['turnstile_enabled'])) return;
         // Nonce is verified by WordPress core in wp-login.php for registration
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $token = isset($_POST['cf-turnstile-response']) ? sanitize_text_field(wp_unslash($_POST['cf-turnstile-response'])) : '';
         if (empty($token)){
             $errors->add('sg_captcha', __('Please complete the CAPTCHA (Turnstile).', 'simple-guard'));
@@ -53,6 +54,7 @@ class SG_Login_Protect {
         $opts = get_option('sg_options');
         if (empty($opts['turnstile_enabled'])) return;
         // Nonce is verified by WordPress core in wp-login.php for lostpassword
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $token = isset($_POST['cf-turnstile-response']) ? sanitize_text_field(wp_unslash($_POST['cf-turnstile-response'])) : '';
         if (empty($token)){
             wp_die(esc_html(__('Please complete the CAPTCHA (Turnstile).', 'simple-guard')), 400);

@@ -3,7 +3,7 @@ Contributors: Kref Studio
 Tags: security, login, turnstile, ban, protection
 Requires at least: 6.0
 Tested up to: 6.9
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,13 @@ Simple Guard provides comprehensive login security for WordPress with fail-ban p
 Yes, Simple Guard includes its own custom login URL feature. Disable other custom login plugins to avoid conflicts.
 
 == Changelog ==
+
+= 1.3.1 =
+* Security: Fixed SQL injection warnings in Ban Manager
+* Security: Fixed direct database query warnings
+* Security: Improved nonce verification handling in login protection
+* Code Quality: Switched to wp_parse_url for better compatibility
+* Code Quality: Fixed enqueued resource warnings
 
 = 1.3.0 =
 * Security: Fixed all WordPress.org validation errors and warnings

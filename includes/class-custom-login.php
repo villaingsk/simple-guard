@@ -18,8 +18,8 @@ if (!class_exists('SG_Custom_Login')) {
             // Check if we need to handle the custom URL
             if (isset($_SERVER['REQUEST_URI'])) {
                 $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']));
-                $request_path = parse_url($request_uri, PHP_URL_PATH);
-                $home_path = parse_url(home_url(), PHP_URL_PATH);
+                $request_path = wp_parse_url($request_uri, PHP_URL_PATH);
+                $home_path = wp_parse_url(home_url(), PHP_URL_PATH);
                 
                 // Normalize paths
                 $request_path = rtrim($request_path, '/');
@@ -72,8 +72,8 @@ if (!class_exists('SG_Custom_Login')) {
             // e.g. /my-login/logout/ -> $_GET['action'] = 'logout'
             $slug = $this->get_slug();
             $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
-            $request_path = parse_url($request_uri, PHP_URL_PATH);
-            $home_path = rtrim((string)parse_url(home_url(), PHP_URL_PATH), '/');
+            $request_path = wp_parse_url($request_uri, PHP_URL_PATH);
+            $home_path = rtrim((string)wp_parse_url(home_url(), PHP_URL_PATH), '/');
             $slug_path = $home_path . '/' . $slug;
             
             // If path is longer than slug, extract action
@@ -106,7 +106,8 @@ if (!class_exists('SG_Custom_Login')) {
             // Block direct access to wp-admin for non-logged in users
             if (is_admin() && !is_user_logged_in() && !defined('DOING_AJAX')) {
                  // Double check it's not admin-ajax
-                 if (strpos($_SERVER['PHP_SELF'], 'admin-ajax.php') !== false) return;
+                 // Double check it's not admin-ajax
+                 if (wp_doing_ajax()) return;
 
                  wp_safe_redirect(home_url('404'));
                  exit;
@@ -125,7 +126,8 @@ if (!class_exists('SG_Custom_Login')) {
             
             if ($pagenow === 'wp-login.php' && !isset($_REQUEST['interim-login'])) {
                  // Check if valid action
-                 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+                 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                 $action = isset($_REQUEST['action']) ? sanitize_text_field(wp_unslash($_REQUEST['action'])) : '';
                  
                  // If action is postpass, we might allow it? Usually better to redirect everything.
                  if ($action === 'postpass') return;

@@ -3,7 +3,7 @@
 Plugin Name: Simple Guard
 Plugin URI: https://github.com/justyupi/simple-guard
 Description: Fail-ban + Cloudflare Turnstile integration for WordPress login/register/lostpassword.
-Version: 1.3.0
+Version: 1.3.1
 Author: Kref Studio
 Author URI: https://krefstudio.com
 License: GPL-2.0-or-later
@@ -121,8 +121,9 @@ if (!class_exists('SG_Main')) {
                 // Note: Cloudflare Turnstile requires their external script
                 // This is loaded directly from Cloudflare's CDN as required by their service
                 // Alternative: Users can self-host the script if needed
-                wp_enqueue_script('cloudflare-turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', [], null, true);
-                wp_enqueue_script('sg-turnstile-init', SG_PLUGIN_URL . 'assets/js/turnstile-init.js', ['cloudflare-turnstile'], null, true);
+                // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent
+                wp_enqueue_script('cloudflare-turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', [], 'v0', true);
+                wp_enqueue_script('sg-turnstile-init', SG_PLUGIN_URL . 'assets/js/turnstile-init.js', ['cloudflare-turnstile'], '1.3.0', true);
                 wp_localize_script('sg-turnstile-init', 'SG_TURNSTILE', [
                     'sitekey' => $opts['turnstile_sitekey'],
                     'mode' => $opts['turnstile_mode'] ?? 'always'
@@ -130,7 +131,9 @@ if (!class_exists('SG_Main')) {
                 
                 // Inject CSS to prevent CLS (Layout Shift)
                 $css = '<style>.cf-turnstile{min-height:65px;margin-bottom:16px;}.login .cf-turnstile{margin-bottom:0;}</style>';
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 add_action('login_head', function() use ($css) { echo $css; });
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 add_action('wp_head', function() use ($css) { echo $css; });
             }
         }
