@@ -1,3 +1,6 @@
+Notes:
+no longer used, has been replaced and developed into loginara https://github.com/villaingsk/loginara
+
 Fail-ban + Cloudflare Turnstile integration for WordPress login/register/lostpassword + custom login page.
 
 == Description ==
